@@ -42,6 +42,7 @@ export function PreservationStory() {
 
   return (
     <section
+      id="mission"
       ref={sectionRef}
       data-theme="indigo-archive"
       className="relative overflow-hidden py-20 sm:py-28 lg:py-32"

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Play, Upload, ArrowRight, ChevronDown } from 'lucide-react';
-import { Navbar } from '@/components/Navbar';
 import { FolkMusicPlayer } from '@/components/FolkMusicPlayer';
 import { RegionSelector } from '@/components/RegionSelector';
 import { AmbientVisuals } from '@/components/AmbientVisuals';
@@ -48,9 +47,7 @@ export function Hero() {
   }, [prefersReduced]);
 
   return (
-    <div className="relative min-h-[100svh] w-full overflow-hidden bg-indigo-midnight">
-      <Navbar />
-
+    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-indigo-midnight">
       {/* === Background layers === */}
       <div className="absolute inset-0" aria-hidden="true">
         {/* Base gradient: indigo to maroon */}
@@ -62,7 +59,6 @@ export function Hero() {
             src={heroImage}
             alt="Rajasthani folk musicians playing traditional instruments outdoors"
             className="h-full w-full object-cover object-center opacity-25"
-            fetchPriority="high"
           />
         </div>
 
@@ -85,7 +81,7 @@ export function Hero() {
       {/* === Content === */}
       <div
         ref={heroRef}
-        className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1600px] flex-col px-4 pb-20 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pt-32"
+        className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1600px] flex-col px-4 pb-24 pt-24 sm:px-6 sm:pb-28 sm:pt-28 lg:px-10 lg:pb-24 lg:pt-28"
       >
         <div className="flex flex-1 flex-col items-center gap-10 lg:flex-row lg:items-center lg:gap-8">
           {/* === LEFT: Content (52%) === */}
@@ -180,6 +176,7 @@ export function Hero() {
               {/* Primary */}
               <button
                 type="button"
+                onClick={() => document.getElementById('archive')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' })}
                 className="group relative flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-saffron to-turmeric px-6 py-3.5 text-ivory shadow-xl shadow-saffron/25 transition-all duration-300 hover:shadow-saffron/40 hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-[0.97] sm:px-7"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -204,6 +201,7 @@ export function Hero() {
               {/* Secondary */}
               <button
                 type="button"
+                onClick={() => document.getElementById('preserve')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' })}
                 className="group flex items-center justify-center gap-2.5 rounded-full border border-saffron/30 bg-indigo-midnight/30 px-6 py-3.5 text-ivory backdrop-blur-sm transition-all duration-300 hover:border-saffron/50 hover:bg-indigo-midnight/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-[0.97] sm:px-7"
               >
                 <Upload className="h-4 w-4 text-saffron" />
@@ -243,7 +241,7 @@ export function Hero() {
               initial={prefersReduced ? undefined : { opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}
-              className="relative flex flex-col items-center gap-5"
+              className="relative flex flex-col items-center gap-5 xl:px-16"
             >
               {/* Ambient orbit behind player */}
               <div className="relative flex w-full justify-center">
@@ -263,25 +261,25 @@ export function Hero() {
                   initial={prefersReduced ? undefined : { opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 1 }}
-                  className="absolute -left-2 top-8 hidden rounded-xl border border-saffron/15 bg-indigo-midnight/60 px-3.5 py-2.5 backdrop-blur-md xl:block"
+                  className="absolute left-0 top-5 z-0 hidden max-w-32 rounded-xl border border-saffron/20 bg-indigo-midnight/80 px-3.5 py-2.5 backdrop-blur-md 2xl:block"
                 >
-                  <p className="font-display text-lg font-semibold text-saffron">143</p>
-                  <p className="text-[10px] uppercase tracking-wider text-sand/50">
-                    Regional Traditions
+                  <p className="font-display text-sm font-semibold text-saffron">Growing archive</p>
+                  <p className="text-[10px] uppercase tracking-wider text-sand/70">
+                    Regional traditions
                   </p>
-                  <p className="mt-0.5 text-[9px] text-sand/40">Waiting to be heard</p>
+                  <p className="mt-0.5 text-[9px] text-sand/60">Waiting to be heard</p>
                 </motion.div>
 
                 <motion.div
                   initial={prefersReduced ? undefined : { opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 1.15 }}
-                  className="absolute -right-2 bottom-12 hidden rounded-xl border border-terracotta/15 bg-indigo-midnight/60 px-3.5 py-2.5 backdrop-blur-md xl:block"
+                  className="absolute bottom-8 right-0 z-0 hidden max-w-32 rounded-xl border border-terracotta/20 bg-indigo-midnight/80 px-3.5 py-2.5 backdrop-blur-md 2xl:block"
                 >
                   <p className="font-display text-sm font-semibold text-terracotta-soft">
                     From this soil
                   </p>
-                  <p className="text-[10px] text-sand/50">To listeners worldwide</p>
+                  <p className="text-[10px] text-sand/70">To listeners worldwide</p>
                 </motion.div>
               </div>
 
@@ -324,11 +322,11 @@ export function Hero() {
 
       {/* === Vertical cultural label (desktop only) === */}
       <div
-        className="absolute left-3 top-1/2 hidden -translate-y-1/2 xl:block"
+        className="absolute left-7 top-1/2 hidden -translate-y-1/2 2xl:block"
         aria-hidden="true"
       >
         <p
-          className="text-[10px] font-semibold uppercase tracking-[0.4em] text-sand/25"
+          className="text-[10px] font-semibold uppercase tracking-[0.46em] text-sand/45"
           style={{ writingMode: 'vertical-rl' }}
         >
           Folk • Memory • Rhythm • Identity
@@ -337,7 +335,7 @@ export function Hero() {
 
       {/* === Marquee strip === */}
       <div
-        className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-sand/5 py-2.5"
+        className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-sand/10 py-3"
         aria-hidden="true"
       >
         <div className="flex whitespace-nowrap">
@@ -358,6 +356,6 @@ export function Hero() {
           </motion.div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

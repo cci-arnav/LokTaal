@@ -13,6 +13,9 @@ export function Navbar() {
   const prefersReduced = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [language, setLanguage] = useState<'हिंदी / EN' | 'EN / हिंदी'>('हिंदी / EN');
+  const goToUpload = () => { setMobileOpen(false); document.getElementById('preserve')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' }); };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -43,9 +46,10 @@ export function Navbar() {
       >
         <nav
           aria-label="Main navigation"
+          style={scrolled ? { backgroundColor: 'color-mix(in srgb, var(--page-bg) 90%, transparent)' } : undefined}
           className={`transition-all duration-500 ${
             scrolled
-              ? 'border-b border-saffron/15 bg-indigo-midnight/80 backdrop-blur-xl'
+              ? 'border-b border-[var(--border-subtle)] backdrop-blur-xl'
               : 'border-b border-transparent bg-transparent'
           }`}
         >
@@ -54,12 +58,12 @@ export function Navbar() {
             <a
               href="#"
               aria-label="LokTaal home"
-              className="group flex flex-col leading-none focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron rounded-sm"
+              className="group flex flex-col leading-none text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded-sm"
             >
-              <span className="font-devanagari text-2xl font-normal text-ivory transition-colors group-hover:text-saffron sm:text-[26px]">
+              <span className="font-devanagari text-2xl font-normal transition-colors group-hover:text-[var(--accent-primary)] sm:text-[26px]">
                 लोकताल
               </span>
-              <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.35em] text-sand/50">
+              <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.35em] text-[var(--text-secondary)]">
                 LokTaal
               </span>
             </a>
@@ -70,11 +74,11 @@ export function Navbar() {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="group relative py-2 text-sm font-medium text-sand/80 transition-colors hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron rounded-sm"
+                    className="group relative py-2 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded-sm"
                   >
                     {link.label}
                     {/* Rhythm-line hover indicator */}
-                    <span className="absolute -bottom-0.5 left-0 h-0.5 w-0 overflow-hidden rounded-full bg-saffron transition-all duration-300 group-hover:w-full group-focus-visible:w-full">
+                    <span className="absolute -bottom-0.5 left-0 h-0.5 w-0 overflow-hidden rounded-full bg-[var(--accent-primary)] transition-all duration-300 group-hover:w-full group-focus-visible:w-full">
                       <span className="block h-full w-3 rounded-full bg-terracotta" />
                     </span>
                   </a>
@@ -88,7 +92,9 @@ export function Navbar() {
               <button
                 type="button"
                 aria-label="Search folk music"
-                className="flex h-10 w-10 items-center justify-center rounded-full text-sand/70 transition-colors hover:bg-sand/10 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
+                aria-pressed={searchOpen}
+                onClick={() => setSearchOpen((value) => !value)}
+                className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--border-subtle)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
               >
                 <Search className="h-[18px] w-[18px]" />
               </button>
@@ -97,15 +103,17 @@ export function Navbar() {
               <button
                 type="button"
                 aria-label="Switch language"
-                className="hidden items-center gap-1.5 rounded-full border border-sand/20 px-3 py-1.5 text-xs font-medium text-sand/70 transition-colors hover:border-saffron/40 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron sm:flex"
+                onClick={() => setLanguage((value) => value === 'हिंदी / EN' ? 'EN / हिंदी' : 'हिंदी / EN')}
+                className="hidden items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] sm:flex"
               >
                 <Globe className="h-3.5 w-3.5" />
-                हिंदी / EN
+                {language}
               </button>
 
               {/* Upload CTA */}
               <button
                 type="button"
+                onClick={goToUpload}
                 className="group hidden items-center gap-2 rounded-full bg-gradient-to-r from-terracotta to-saffron px-4 py-2.5 text-sm font-semibold text-indigo-midnight shadow-lg shadow-saffron/20 transition-all duration-300 hover:shadow-saffron/40 hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-95 sm:flex"
               >
                 <Upload className="h-4 w-4" />
@@ -123,6 +131,7 @@ export function Navbar() {
               <button
                 type="button"
                 aria-label="Upload folk music"
+                onClick={goToUpload}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-terracotta to-saffron text-indigo-midnight shadow-lg shadow-saffron/20 transition-all hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron sm:hidden"
               >
                 <Upload className="h-[18px] w-[18px]" />
@@ -197,6 +206,7 @@ export function Navbar() {
               >
                 <button
                   type="button"
+                  onClick={goToUpload}
                   className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-terracotta to-saffron px-6 py-3.5 text-base font-semibold text-indigo-midnight shadow-lg shadow-saffron/20"
                 >
                   <Upload className="h-5 w-5" />
@@ -204,10 +214,11 @@ export function Navbar() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setLanguage((value) => value === 'हिंदी / EN' ? 'EN / हिंदी' : 'हिंदी / EN')}
                   className="flex w-full items-center justify-center gap-2 rounded-full border border-sand/20 px-6 py-3.5 text-base font-medium text-sand/80"
                 >
                   <Globe className="h-4 w-4" />
-                  हिंदी / EN
+                  {language}
                 </button>
               </motion.div>
             </motion.div>

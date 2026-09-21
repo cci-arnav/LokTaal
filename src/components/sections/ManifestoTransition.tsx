@@ -15,7 +15,6 @@ export function ManifestoTransition() {
   const rhythmLineProgress = useTransform(scrollYProgress, [0.1, 0.6], [0, 1]);
   const bgOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 0.4, 0.4, 0]);
   const textX = useTransform(scrollYProgress, [0, 1], ['0%', '-50%']);
-  const beatPointX = useTransform(scrollYProgress, [0.1, 0.6], ['0%', '100%']);
   const firstLineY = useTransform(scrollYProgress, [0.15, 0.4], [40, 0]);
   const firstLineOpacity = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
   const secondLineY = useTransform(scrollYProgress, [0.25, 0.5], [40, 0]);

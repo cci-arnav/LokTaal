@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, MapPin, Play, ArrowRight } from 'lucide-react';
-import { regions, type Region } from '@/data/regions';
+import { regions } from '@/data/regions';
 import { InteractiveWaveform } from '@/components/audio/InteractiveWaveform';
+import { useAudio } from '@/components/audio/AudioProvider';
 
 interface RegionalDiscoveryProps {
   soundEnabled: boolean;
@@ -14,6 +15,7 @@ export function RegionalDiscovery({ soundEnabled, onPlayTone }: RegionalDiscover
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const { playTrack } = useAudio();
 
   const region = regions[activeIndex];
 
@@ -92,6 +94,7 @@ export function RegionalDiscovery({ soundEnabled, onPlayTone }: RegionalDiscover
 
   return (
     <section
+      id="regions"
       ref={sectionRef}
       data-theme="forest-echo"
       className="relative overflow-hidden py-20 sm:py-28 lg:py-32"
@@ -263,6 +266,7 @@ export function RegionalDiscovery({ soundEnabled, onPlayTone }: RegionalDiscover
                 {/* Explore button */}
                 <button
                   type="button"
+                  onClick={() => playTrack({ id: `region-${region.id}`, title: region.trackTitle, artist: region.artist, location: `${region.name}, ${region.country}`, language: region.language, tradition: region.tradition, artwork: region.image, duration: 'Preview', credit: 'Demonstration regional profile', region: region.name, addedOrder: 0 })}
                   className="group mt-6 flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-95"
                   style={{
                     backgroundColor: 'var(--accent-primary)',
@@ -405,7 +409,7 @@ function RhythmBeads({
   };
 
   return (
-    <div className="flex items-center gap-2.5" role="group" aria-label="Rhythm beads">
+    <div className="flex items-center gap-2.5" role="group" aria-label={soundEnabled ? 'Rhythm beads, sound on' : 'Rhythm beads, sound off'}>
       {[0, 1, 2, 3, 4].map((i) => (
         <button
           key={i}

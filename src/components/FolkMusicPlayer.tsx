@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   Play,
@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import type { FeaturedTrack } from '@/data/featuredTracks';
+import { useAudio } from '@/components/audio/AudioProvider';
 
 interface FolkMusicPlayerProps {
   track: FeaturedTrack;
@@ -19,20 +20,18 @@ interface FolkMusicPlayerProps {
 
 export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
   const prefersReduced = useReducedMotion();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const { track: globalTrack, isPlaying: globalPlaying, progress: globalProgress, playTrack, toggle, seek, volume, setVolume } = useAudio();
   const [muted, setMuted] = useState(false);
   const [saved, setSaved] = useState(false);
   const [shared, setShared] = useState(false);
 
-  // Simulated playback progress (UI-only; no real audio asset yet).
-  useEffect(() => {
-    if (!isPlaying) return;
-    const interval = setInterval(() => {
-      setProgress((p) => (p >= 100 ? 0 : p + 0.4));
-    }, 200);
-    return () => clearInterval(interval);
-  }, [isPlaying]);
+  const isCurrent = globalTrack?.id === track.id;
+  const isPlaying = isCurrent && globalPlaying;
+  const progress = isCurrent ? globalProgress : 0;
+  const selectTrack = () => {
+    if (isCurrent) toggle();
+    else playTrack({ id: track.id, title: track.title, artist: track.artist, location: track.location, language: track.language, tradition: track.category, artwork: track.artwork, duration: track.duration, credit: track.verified ? 'Community credit recorded' : 'Demonstration credit', region: track.region, addedOrder: 0 });
+  };
 
   const currentTime = formatTime((progress / 100) * 272); // 4:32 = 272s
   const accent = track.accent;
@@ -89,7 +88,7 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
           />
           <button
             type="button"
-            onClick={() => setIsPlaying(!isPlaying)}
+            onClick={selectTrack}
             aria-label={isPlaying ? 'Pause track' : 'Play track'}
             className="absolute inset-0 flex items-center justify-center rounded-full bg-indigo-midnight/40 transition-colors hover:bg-indigo-midnight/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
           >
@@ -179,11 +178,11 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
           tabIndex={0}
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
-            setProgress(((e.clientX - rect.left) / rect.width) * 100);
+            seek(((e.clientX - rect.left) / rect.width) * 100);
           }}
           onKeyDown={(e) => {
-            if (e.key === 'ArrowRight') setProgress((p) => Math.min(100, p + 5));
-            if (e.key === 'ArrowLeft') setProgress((p) => Math.max(0, p - 5));
+            if (e.key === 'ArrowRight') seek(progress + 5);
+            if (e.key === 'ArrowLeft') seek(progress - 5);
           }}
         >
           <motion.div
@@ -204,11 +203,11 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setMuted(!muted)}
-            aria-label={muted ? 'Unmute' : 'Mute'}
+            onClick={() => { setMuted(!muted); setVolume(muted ? 0.8 : 0); }}
+            aria-label={muted || volume === 0 ? 'Unmute' : 'Mute'}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-sand/5 text-sand/60 transition-colors hover:bg-sand/10 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
           >
-            {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+            {muted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </button>
           <button
             type="button"

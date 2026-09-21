@@ -65,6 +65,36 @@
   --selection-text: #25204d;
 }
 
+[data-theme='ember-stage'] {
+  --page-bg: #5b1f2a;
+  --surface: #702936;
+  --surface-raised: #823644;
+  --text-primary: #fff7e8;
+  --text-secondary: #dec8bb;
+  --accent-primary: #f0b23d;
+  --accent-secondary: #e06543;
+  --border-subtle: rgba(255, 247, 232, 0.16);
+  --rhythm-line: #f0b23d;
+  --glow-color: rgba(240, 178, 61, 0.24);
+  --selection-bg: #f0b23d;
+  --selection-text: #5b1f2a;
+}
+
+[data-theme='archive-paper'] {
+  --page-bg: #efe0c0;
+  --surface: #f8edd7;
+  --surface-raised: #fff7e8;
+  --text-primary: #2c2021;
+  --text-secondary: #6d5b50;
+  --accent-primary: #9e302d;
+  --accent-secondary: #1d5947;
+  --border-subtle: rgba(44, 32, 33, 0.14);
+  --rhythm-line: #9e302d;
+  --glow-color: rgba(158, 48, 45, 0.18);
+  --selection-bg: #9e302d;
+  --selection-text: #fff7e8;
+}
+
 /* Smooth theme transitions on the root element */
 html {
   transition: background-color 700ms ease, color 700ms ease;

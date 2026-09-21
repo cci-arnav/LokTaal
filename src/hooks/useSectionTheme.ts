@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 
-export type ThemeName = 'midnight-raga' | 'desert-folk' | 'forest-echo' | 'indigo-archive';
+export type ThemeName = 'midnight-raga' | 'desert-folk' | 'forest-echo' | 'indigo-archive' | 'ember-stage' | 'archive-paper';
 
 export const themeNames: ThemeName[] = [
   'midnight-raga',
   'desert-folk',
   'forest-echo',
   'indigo-archive',
+  'ember-stage',
+  'archive-paper',
 ];
 
 /**
