@@ -1,0 +1,76 @@
+/* === LokTaal Theme System ===
+   CSS-variable-based theming. Each section sets data-theme on its root element.
+   The SectionThemeController sets the active theme on <html> via IntersectionObserver.
+   Components use var(--*) instead of hardcoded colors for theme-aware styling.
+*/
+
+:root,
+[data-theme='midnight-raga'] {
+  --page-bg: #17122b;
+  --surface: #211a3b;
+  --surface-raised: #2a2148;
+  --text-primary: #fff8ea;
+  --text-secondary: #cfc2af;
+  --accent-primary: #e9a52b;
+  --accent-secondary: #c84e37;
+  --border-subtle: rgba(232, 215, 185, 0.12);
+  --rhythm-line: #e9a52b;
+  --glow-color: rgba(233, 165, 43, 0.25);
+  --selection-bg: #e9a52b;
+  --selection-text: #17122b;
+}
+
+[data-theme='desert-folk'] {
+  --page-bg: #e9d1a5;
+  --surface: #f5e6c8;
+  --surface-raised: #fdf0d6;
+  --text-primary: #351b20;
+  --text-secondary: #765a4c;
+  --accent-primary: #a9342b;
+  --accent-secondary: #d88924;
+  --border-subtle: rgba(53, 27, 32, 0.12);
+  --rhythm-line: #a9342b;
+  --glow-color: rgba(169, 52, 43, 0.2);
+  --selection-bg: #a9342b;
+  --selection-text: #f5e6c8;
+}
+
+[data-theme='forest-echo'] {
+  --page-bg: #163d32;
+  --surface: #1e4d40;
+  --surface-raised: #265a4b;
+  --text-primary: #fff7e8;
+  --text-secondary: #bfd3c7;
+  --accent-primary: #e5b64a;
+  --accent-secondary: #d76643;
+  --border-subtle: rgba(191, 211, 199, 0.12);
+  --rhythm-line: #e5b64a;
+  --glow-color: rgba(229, 182, 74, 0.22);
+  --selection-bg: #e5b64a;
+  --selection-text: #163d32;
+}
+
+[data-theme='indigo-archive'] {
+  --page-bg: #25204d;
+  --surface: #312a5f;
+  --surface-raised: #3a3370;
+  --text-primary: #faf3e6;
+  --text-secondary: #c9c0dc;
+  --accent-primary: #e59b32;
+  --accent-secondary: #d44f56;
+  --border-subtle: rgba(201, 192, 220, 0.12);
+  --rhythm-line: #e59b32;
+  --glow-color: rgba(229, 155, 50, 0.22);
+  --selection-bg: #e59b32;
+  --selection-text: #25204d;
+}
+
+/* Smooth theme transitions on the root element */
+html {
+  transition: background-color 700ms ease, color 700ms ease;
+}
+
+::selection {
+  background-color: var(--selection-bg);
+  color: var(--selection-text);
+}
