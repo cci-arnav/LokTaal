@@ -1,24 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { Globe2, Menu, Search, Upload, X } from 'lucide-react';
+import { Globe2, LogOut, Menu, Search, ShieldCheck, Upload, UserRound, X } from 'lucide-react';
 import logo from '@/assets/branding/loktaal-logo.png';
 import { useI18n } from '@/contexts/I18nContext';
 import { AppLink, useRouter } from '@/contexts/RouterContext';
 import { buildSearchIndex, filterSearch } from '@/lib/search';
 import { indiaRegions } from '@/data/indiaStates';
 import { demoTunes } from '@/data/demoTunes';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePublicSongs } from '@/contexts/PublicSongsContext';
 
 export function Navbar() {
   const reduced = useReducedMotion();
   const { t, language, toggleLanguage } = useI18n();
   const { path, navigate } = useRouter();
+  const { isAuthenticated, isAdmin, signOut } = useAuth();
+  const { tracks: approvedTracks } = usePublicSongs();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [activeResult, setActiveResult] = useState(0);
   const searchRef = useRef<HTMLDivElement>(null);
-  const index = useMemo(() => buildSearchIndex(indiaRegions, demoTunes), []);
+  const index = useMemo(() => buildSearchIndex(indiaRegions, [...approvedTracks, ...demoTunes]), [approvedTracks]);
   const results = useMemo(() => filterSearch(index, query), [index, query]);
 
   const links = [
@@ -59,6 +63,7 @@ export function Navbar() {
     if (event.key === 'Enter' && results[activeResult]) { event.preventDefault(); chooseResult(results[activeResult].href); }
     if (event.key === 'Escape') setSearchOpen(false);
   };
+  const logout = async () => { await signOut(); navigate('/'); };
 
   return <motion.header initial={reduced ? undefined : { y: -70, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="fixed inset-x-0 top-0 z-50">
     <nav aria-label="Main navigation" style={scrolled || path !== '/' ? { backgroundColor: 'color-mix(in srgb, var(--page-bg) 93%, transparent)' } : undefined} className={`border-b transition duration-300 ${scrolled || path !== '/' ? 'border-[var(--border-subtle)] shadow-lg backdrop-blur-xl' : 'border-transparent'}`}>
@@ -74,7 +79,10 @@ export function Navbar() {
             <SearchResults open={searchOpen} query={query} results={results} active={activeResult} onChoose={chooseResult} />
           </div>
           <button type="button" onClick={toggleLanguage} aria-label="Switch language" className="hidden h-11 items-center gap-1 rounded-full border border-[var(--border-subtle)] px-3 text-sm font-semibold sm:flex"><Globe2 className="h-4 w-4" />{language === 'en' ? 'हिंदी' : 'EN'}</button>
-          <button type="button" onClick={() => navigate('/login?redirect=/upload')} className="hidden min-h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[#E06543] to-[#F0B23D] px-4 text-sm font-bold text-[#21112a] shadow-lg sm:flex"><Upload className="h-4 w-4" />{t('nav.upload')}</button>
+          {isAuthenticated && <button type="button" onClick={() => navigate('/my-submissions')} aria-label="My submissions" className="hidden h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] lg:flex"><UserRound className="h-4 w-4" /></button>}
+          {isAdmin && <button type="button" onClick={() => navigate('/admin/submissions')} aria-label="Moderate submissions" className="hidden h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] lg:flex"><ShieldCheck className="h-4 w-4" /></button>}
+          {isAuthenticated && <button type="button" onClick={() => void logout()} aria-label="Log out" className="hidden h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] lg:flex"><LogOut className="h-4 w-4" /></button>}
+          <button type="button" onClick={() => navigate(isAuthenticated ? '/upload' : '/login?redirect=/upload')} className="hidden min-h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[#E06543] to-[#F0B23D] px-4 text-sm font-bold text-[#21112a] shadow-lg sm:flex"><Upload className="h-4 w-4" />{t('nav.upload')}</button>
           <button type="button" onClick={() => setMobileOpen((value) => !value)} aria-expanded={mobileOpen} aria-controls="mobile-navigation" aria-label={mobileOpen ? 'Close menu' : 'Open menu'} className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] xl:hidden">{mobileOpen ? <X /> : <Menu />}</button>
         </div>
       </div>
@@ -83,7 +91,10 @@ export function Navbar() {
       <div className="mx-auto max-w-xl">
         <MobileSearch query={query} setQuery={setQuery} results={results} onChoose={chooseResult} placeholder={t('search.placeholder')} noResults={t('search.none')} />
         <ul className="mt-6">{links.map((link) => <li key={link.href}><AppLink to={link.href} onClick={(event) => goSection(event, link.section)} aria-current={isCurrentLink(link) ? 'page' : undefined} className="flex min-h-14 items-center justify-between border-b border-white/10 text-lg font-semibold aria-[current=page]:text-[#F0B23D]">{link.label}<span className="text-[#F0B23D]">→</span></AppLink></li>)}</ul>
-        <button type="button" onClick={() => navigate('/login?redirect=/upload')} className="mt-7 flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#E06543] to-[#F0B23D] font-bold text-[#21112a]"><Upload className="h-5 w-5" />{t('nav.upload')}</button>
+        {isAuthenticated && <AppLink to="/my-submissions" className="mt-6 flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20"><UserRound className="h-4 w-4" />My submissions</AppLink>}
+        {isAdmin && <AppLink to="/admin/submissions" className="mt-3 flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20"><ShieldCheck className="h-4 w-4" />Moderation</AppLink>}
+        <button type="button" onClick={() => navigate(isAuthenticated ? '/upload' : '/login?redirect=/upload')} className="mt-3 flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#E06543] to-[#F0B23D] font-bold text-[#21112a]"><Upload className="h-5 w-5" />{t('nav.upload')}</button>
+        {isAuthenticated && <button type="button" onClick={() => void logout()} className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/20"><LogOut className="h-4 w-4" />Log out</button>}
         <button type="button" onClick={toggleLanguage} className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/20"><Globe2 className="h-4 w-4" />{language === 'en' ? 'हिंदी' : 'EN'}</button>
       </div>
     </motion.div>}</AnimatePresence>

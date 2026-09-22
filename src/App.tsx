@@ -16,12 +16,16 @@ import { MiniPlayer } from "@/components/audio/MiniPlayer";
 import { AppLoader } from "@/components/AppLoader";
 import { I18nProvider, useI18n } from "@/contexts/I18nContext";
 import { RouterProvider, useRouter, AppLink } from "@/contexts/RouterContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { LoginPage, SignupPage } from "@/pages/AuthPages";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { PublicSongsProvider } from "@/contexts/PublicSongsContext";
+import { AuthCallbackPage, LoginPage, ResetPasswordPage, SignupPage } from "@/pages/AuthPages";
 import { UploadPage } from "@/pages/UploadPage";
+import { MySubmissionsPage } from "@/pages/MySubmissionsPage";
+import { AdminSubmissionsPage } from "@/pages/AdminSubmissionsPage";
 import { StatePage } from "@/pages/StatePage";
 import { useOptionalSound } from "@/hooks/useOptionalSound";
 import { LOADER_FAILSAFE_MS, loaderMayClose } from "@/lib/loader";
+import { authorizeRoute } from "@/lib/routing";
 import "@/styles/themes.css";
 
 function ThemeObserver() {
@@ -101,7 +105,8 @@ function NotFoundPage() {
 }
 
 function RouteView() {
-  const { route } = useRouter();
+  const { route, navigate } = useRouter();
+  const { isAuthenticated, isAdmin, loading } = useAuth();
   useEffect(() => {
     if (route.name !== "home")
       document.documentElement.setAttribute(
@@ -109,10 +114,23 @@ function RouteView() {
         route.name === "upload" ? "archive-paper" : "midnight-raga",
       );
   }, [route.name]);
+  useEffect(() => {
+    if (loading) return;
+    const decision = authorizeRoute(route, isAuthenticated, isAdmin);
+    if (decision === 'login') navigate(`/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`, { replace: true });
+    if (decision === 'home') navigate('/', { replace: true });
+  }, [isAdmin, isAuthenticated, loading, navigate, route]);
+  const decision = authorizeRoute(route, isAuthenticated, isAdmin);
+  if (loading && decision !== 'allow') return <main className="min-h-screen bg-[#25113f] px-6 pt-36 text-center text-white">Checking your secure session…</main>;
+  if (decision !== 'allow') return null;
   if (route.name === "home") return <Homepage />;
   if (route.name === "login") return <LoginPage />;
   if (route.name === "signup") return <SignupPage />;
+  if (route.name === "reset-password") return <ResetPasswordPage />;
+  if (route.name === "auth-callback") return <AuthCallbackPage />;
   if (route.name === "upload") return <UploadPage />;
+  if (route.name === "my-submissions") return <MySubmissionsPage />;
+  if (route.name === "admin-submissions") return <AdminSubmissionsPage />;
   if (route.name === "state") return <StatePage slug={route.slug} />;
   return <NotFoundPage />;
 }
@@ -163,9 +181,11 @@ export default function App() {
     <I18nProvider>
       <RouterProvider>
         <AuthProvider>
-          <AudioProvider>
-            <AppFrame />
-          </AudioProvider>
+          <PublicSongsProvider>
+            <AudioProvider>
+              <AppFrame />
+            </AudioProvider>
+          </PublicSongsProvider>
         </AuthProvider>
       </RouterProvider>
     </I18nProvider>
