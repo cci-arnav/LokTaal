@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, Play } from 'lucide-react';
-import { featuredArtists } from '@/data/phase3';
+import { indiaFeaturedArtists as featuredArtists } from '@/data/phase3';
 import { useAudio } from '@/components/audio/AudioProvider';
 
 export function FeaturedVoices() {
@@ -14,12 +14,12 @@ export function FeaturedVoices() {
   const play = () => playTrack({ id: `artist-${artist.id}`, title: artist.trackTitle, artist: artist.name, location: `${artist.region}, ${artist.country}`, language: artist.language, tradition: artist.tradition, artwork: artist.image, duration: 'Preview', credit: 'Demonstration profile', region: artist.region, addedOrder: 0 });
 
   return (
-    <section id="artists" data-theme="ember-stage" className="overflow-hidden bg-[var(--page-bg)] px-4 py-20 text-[var(--text-primary)] sm:px-6 lg:px-10 lg:py-28">
+    <section id="artists" data-theme="ember-stage" className="overflow-hidden bg-[var(--page-bg)] px-4 py-16 text-[var(--text-primary)] sm:px-6 lg:px-10 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--accent-primary)]">Featured Voices</p>
         <div className="mt-4 flex flex-col justify-between gap-4 lg:flex-row lg:items-end"><h2 className="max-w-3xl font-devanagari text-3xl leading-tight sm:text-4xl lg:text-5xl">जिन आवाज़ों से लोकधुनें जीवित हैं</h2><p className="max-w-lg text-sm leading-6 text-[var(--text-secondary)] sm:text-base">Meet demonstration artists and communities carrying generations of music forward.</p></div>
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-[var(--border-subtle)]" onTouchStart={(e) => { touchStart.current = e.touches[0].clientX; }} onTouchEnd={(e) => { const delta = e.changedTouches[0].clientX - touchStart.current; if (Math.abs(delta) > 45) select(activeIndex + (delta < 0 ? 1 : -1)); }}>
+        <div className="mt-9 grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="relative min-h-[460px] overflow-hidden rounded-[2rem] border border-[var(--border-subtle)]" onTouchStart={(e) => { touchStart.current = e.touches[0].clientX; }} onTouchEnd={(e) => { const delta = e.changedTouches[0].clientX - touchStart.current; if (Math.abs(delta) > 45) select(activeIndex + (delta < 0 ? 1 : -1)); }}>
             <AnimatePresence mode="wait"><motion.img key={artist.id} src={artist.image} alt={`Demonstration portrait for ${artist.name}`} initial={reduced ? false : { opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} exit={reduced ? undefined : { opacity: 0 }} className="absolute inset-0 h-full w-full object-cover" /></AnimatePresence>
             <div className="absolute inset-0 bg-gradient-to-t from-[#38131b] via-[#38131b]/25 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">

@@ -8,12 +8,14 @@ interface AudioState {
   currentTime: number;
   duration: number;
   volume: number;
+  muted: boolean;
   loading: boolean;
   error: string;
   playTrack: (track: AudioTrack) => void;
   toggle: () => void;
   seek: (value: number) => void;
   setVolume: (value: number) => void;
+  toggleMute: () => void;
   close: () => void;
 }
 
@@ -26,16 +28,19 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolumeState] = useState(0.8);
+  const [muted, setMuted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const audio = new Audio();
+    audio.volume = volume;
+    audio.muted = muted;
     audioRef.current = audio;
     const update = () => { setCurrentTime(audio.currentTime); setDuration(Number.isFinite(audio.duration) ? audio.duration : 0); setProgress(audio.duration ? (audio.currentTime / audio.duration) * 100 : 0); };
-    const ended = () => setIsPlaying(false);
-    const failed = () => { setIsPlaying(false); setLoading(false); setError('This preview could not be played.'); };
+    const ended = () => { setIsPlaying(false); setProgress(100); };
+    const failed = () => { setIsPlaying(false); setLoading(false); setError('playback'); };
     const ready = () => { setLoading(false); setDuration(Number.isFinite(audio.duration) ? audio.duration : 0); };
     const waiting = () => setLoading(true);
     audio.addEventListener('timeupdate', update);
@@ -51,6 +56,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       audio.removeEventListener('canplay', ready);
       audio.removeEventListener('waiting', waiting);
     };
+  // The media element is intentionally created once; volume and mute changes are
+  // synchronized by their dedicated callbacks below.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -72,7 +80,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       if (audio && next.audioUrl) { setLoading(true); audio.src = next.audioUrl; audio.load(); }
     }
     setIsPlaying(true);
-    if (next.audioUrl) audio?.play().catch(() => { setIsPlaying(false); setLoading(false); setError('This preview could not be played.'); });
+    if (next.audioUrl) audio?.play().catch(() => { setIsPlaying(false); setLoading(false); setError('playback'); });
   }, [track]);
 
   const toggle = useCallback(() => {
@@ -80,7 +88,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     setIsPlaying((playing) => {
       const next = !playing;
       if (track.audioUrl) {
-        if (next) audioRef.current?.play().catch(() => setIsPlaying(false));
+        if (next) audioRef.current?.play().catch(() => { setIsPlaying(false); setError('playback'); });
         else audioRef.current?.pause();
       }
       return next;
@@ -97,11 +105,24 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const setVolume = useCallback((value: number) => {
     const safe = Math.max(0, Math.min(1, value));
     setVolumeState(safe);
-    if (audioRef.current) audioRef.current.volume = safe;
+    if (safe > 0) setMuted(false);
+    if (audioRef.current) {
+      audioRef.current.volume = safe;
+      if (safe > 0) audioRef.current.muted = false;
+    }
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    setMuted((value) => {
+      const next = !value;
+      if (audioRef.current) audioRef.current.muted = next;
+      return next;
+    });
   }, []);
 
   const close = useCallback(() => {
     audioRef.current?.pause();
+    if (audioRef.current) audioRef.current.currentTime = 0;
     setIsPlaying(false);
     setTrack(null);
     setProgress(0);
@@ -111,7 +132,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     setError('');
   }, []);
 
-  const value = useMemo(() => ({ track, isPlaying, progress, currentTime, duration, volume, loading, error, playTrack, toggle, seek, setVolume, close }), [track, isPlaying, progress, currentTime, duration, volume, loading, error, playTrack, toggle, seek, setVolume, close]);
+  const value = useMemo(() => ({ track, isPlaying, progress, currentTime, duration, volume, muted, loading, error, playTrack, toggle, seek, setVolume, toggleMute, close }), [track, isPlaying, progress, currentTime, duration, volume, muted, loading, error, playTrack, toggle, seek, setVolume, toggleMute, close]);
   return <AudioContext.Provider value={value}>{children}</AudioContext.Provider>;
 }
 

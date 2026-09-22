@@ -75,8 +75,8 @@ export const regions: Region[] = [
     bgWord: 'पर्वत',
   },
   {
-    id: 'bengal',
-    name: 'Bengal',
+    id: 'west-bengal',
+    name: 'West Bengal',
     country: 'India',
     shortDescription:
       'Baul wanderers and mystic song-poets carrying centuries of oral philosophy across the delta.',
@@ -129,3 +129,6 @@ export const regions: Region[] = [
     bgWord: 'विरासत',
   },
 ];
+
+export const indiaDiscoveryRegions = regions.filter((region) => region.country === 'India');
+export const globalDiscoveryRegions = regions.filter((region) => region.country !== 'India');

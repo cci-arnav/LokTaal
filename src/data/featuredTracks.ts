@@ -17,7 +17,7 @@ export interface FeaturedTrack {
   verified: boolean;
 }
 
-export const featuredTracks: FeaturedTrack[] = [
+const featuredTrackCatalog: FeaturedTrack[] = [
   {
     id: 'track-rajasthan',
     title: 'माटी री पुकार',
@@ -80,12 +80,11 @@ export const featuredTracks: FeaturedTrack[] = [
   },
 ];
 
+export const featuredTracks = featuredTrackCatalog.filter((track) => track.region !== 'Andes');
+export const globalFeaturedTracks = featuredTrackCatalog.filter((track) => track.region === 'Andes');
+
 export const regionChips = [
   'Rajasthan',
   'Assam',
-  'Punjab',
   'Nagaland',
-  'Bengal',
-  'Andes',
-  'West Africa',
 ];

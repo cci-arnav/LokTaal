@@ -62,8 +62,8 @@ export function Navbar() {
 
   return <motion.header initial={reduced ? undefined : { y: -70, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="fixed inset-x-0 top-0 z-50">
     <nav aria-label="Main navigation" style={scrolled || path !== '/' ? { backgroundColor: 'color-mix(in srgb, var(--page-bg) 93%, transparent)' } : undefined} className={`border-b transition duration-300 ${scrolled || path !== '/' ? 'border-[var(--border-subtle)] shadow-lg backdrop-blur-xl' : 'border-transparent'}`}>
-      <div className="relative mx-auto flex h-[74px] max-w-[1600px] items-center gap-4 px-3 sm:px-6 lg:px-8">
-        <AppLink to="/" aria-label="Loktaal home" className="flex shrink-0 rounded-l px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"><img src={logo} alt="Loktaal" className="h-auto w-[170px] object-contain sm:w-[154px]" /></AppLink>
+      <div className="relative mx-auto flex h-20 max-w-[1600px] items-center gap-4 px-3 sm:px-6 lg:px-8">
+        <AppLink to="/" aria-label="Loktaal home" className="flex h-16 shrink-0 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.09] px-2 shadow-lg shadow-black/10 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"><img src={logo} alt="Loktaal" className="h-auto w-[144px] max-w-none object-contain sm:w-[158px] lg:w-[164px]" /></AppLink>
         <ul className="hidden flex-1 items-center justify-center gap-4 xl:flex">{links.map((link) => <li key={link.href}><AppLink to={link.href} onClick={(event) => goSection(event, link.section)} aria-current={isCurrentLink(link) ? 'page' : undefined} className="rounded-md px-2 py-3 text-sm font-semibold text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] aria-[current=page]:text-[var(--accent-primary)]">{link.label}</AppLink></li>)}</ul>
         <div className="ml-auto flex items-center gap-2">
           <div ref={searchRef} className="relative hidden md:block">
@@ -79,7 +79,7 @@ export function Navbar() {
         </div>
       </div>
     </nav>
-    <AnimatePresence>{mobileOpen && <motion.div id="mobile-navigation" initial={reduced ? false : { opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? undefined : { opacity: 0, y: -12 }} className="fixed inset-x-0 bottom-0 top-[74px] overflow-y-auto bg-[#17122B]/98 p-5 text-[#FFF7E8] backdrop-blur-xl xl:hidden">
+    <AnimatePresence>{mobileOpen && <motion.div id="mobile-navigation" initial={reduced ? false : { opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? undefined : { opacity: 0, y: -12 }} className="fixed inset-x-0 bottom-0 top-20 overflow-y-auto bg-[#17122B]/98 p-5 text-[#FFF7E8] backdrop-blur-xl xl:hidden">
       <div className="mx-auto max-w-xl">
         <MobileSearch query={query} setQuery={setQuery} results={results} onChoose={chooseResult} placeholder={t('search.placeholder')} noResults={t('search.none')} />
         <ul className="mt-6">{links.map((link) => <li key={link.href}><AppLink to={link.href} onClick={(event) => goSection(event, link.section)} aria-current={isCurrentLink(link) ? 'page' : undefined} className="flex min-h-14 items-center justify-between border-b border-white/10 text-lg font-semibold aria-[current=page]:text-[#F0B23D]">{link.label}<span className="text-[#F0B23D]">→</span></AppLink></li>)}</ul>

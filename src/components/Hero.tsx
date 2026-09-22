@@ -46,24 +46,24 @@ export function Hero() {
   }, [prefersReduced]);
 
   return (
-    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-[#3d176d]">
+    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-[#4C1D95]">
       {/* === Background layers === */}
       <div className="absolute inset-0" aria-hidden="true">
         {/* Base gradient: indigo to maroon */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_30%,rgba(147,51,234,.48),transparent_35%),linear-gradient(135deg,#301052_0%,#5B21B6_48%,#6f234d_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_18%,rgba(192,132,252,.42),transparent_34%),radial-gradient(circle_at_82%_34%,rgba(147,51,234,.56),transparent_40%),linear-gradient(135deg,#4C1D95_0%,#7C3AED_50%,#7A285F_100%)]" />
 
         {/* Folk performer image */}
         <div className="absolute inset-0">
           <img
             src={heroImage}
             alt="Rajasthani folk musicians playing traditional instruments outdoors"
-            className="h-full w-full object-cover object-center opacity-30"
+            className="h-full w-full object-cover object-center opacity-[0.38]"
           />
         </div>
 
         {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#26103f]/95 via-[#3f1769]/78 to-[#5B21B6]/28" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#25103d]/95 via-transparent to-[#341152]/65" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(35,12,62,.94)_0%,rgba(76,29,149,.66)_48%,rgba(147,51,234,.16)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(44,16,79,.82)_0%,transparent_48%,rgba(109,40,217,.24)_100%)]" />
 
         {/* Textile line pattern */}
         <div className="textile-pattern absolute inset-0 opacity-40" />

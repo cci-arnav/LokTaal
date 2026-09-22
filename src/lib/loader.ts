@@ -1,5 +1,5 @@
-export const LOADER_MIN_MS = 350;
-export const LOADER_FAILSAFE_MS = 3000;
+export const LOADER_MIN_MS = 0;
+export const LOADER_FAILSAFE_MS = 1750;
 export function loaderMayClose(
   startedAt: number,
   now: number,

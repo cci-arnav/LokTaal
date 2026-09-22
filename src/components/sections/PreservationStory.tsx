@@ -45,7 +45,7 @@ export function PreservationStory() {
       id="mission"
       ref={sectionRef}
       data-theme="indigo-archive"
-      className="relative overflow-hidden py-20 sm:py-28 lg:py-32"
+      className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
       style={{
         backgroundColor: 'var(--page-bg)',
         color: 'var(--text-primary)',

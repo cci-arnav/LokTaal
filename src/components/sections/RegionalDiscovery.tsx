@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, MapPin, Play, ArrowRight } from 'lucide-react';
-import { regions } from '@/data/regions';
+import { globalDiscoveryRegions, indiaDiscoveryRegions } from '@/data/regions';
 import { InteractiveWaveform } from '@/components/audio/InteractiveWaveform';
 import { useAudio } from '@/components/audio/AudioProvider';
+import { useI18n } from '@/contexts/I18nContext';
 
 interface RegionalDiscoveryProps {
   soundEnabled: boolean;
@@ -16,15 +17,16 @@ export function RegionalDiscovery({ soundEnabled, onPlayTone }: RegionalDiscover
   const sectionRef = useRef<HTMLElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const { playTrack } = useAudio();
+  const { t } = useI18n();
 
-  const region = regions[activeIndex];
+  const region = indiaDiscoveryRegions[activeIndex];
 
   const nextRegion = useCallback(() => {
-    setActiveIndex((i) => (i + 1) % regions.length);
+    setActiveIndex((i) => (i + 1) % indiaDiscoveryRegions.length);
   }, []);
 
   const prevRegion = useCallback(() => {
-    setActiveIndex((i) => (i - 1 + regions.length) % regions.length);
+    setActiveIndex((i) => (i - 1 + indiaDiscoveryRegions.length) % indiaDiscoveryRegions.length);
   }, []);
 
   // Keyboard navigation
@@ -97,7 +99,7 @@ export function RegionalDiscovery({ soundEnabled, onPlayTone }: RegionalDiscover
       id="regions"
       ref={sectionRef}
       data-theme="forest-echo"
-      className="relative overflow-hidden py-20 sm:py-28 lg:py-32"
+      className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
       style={{
         backgroundColor: 'var(--page-bg)',
         color: 'var(--text-primary)',
@@ -172,7 +174,7 @@ export function RegionalDiscovery({ soundEnabled, onPlayTone }: RegionalDiscover
                 {String(activeIndex + 1).padStart(2, '0')}
               </span>
               <div className="flex flex-col gap-1">
-                {regions.map((r, i) => (
+                {indiaDiscoveryRegions.map((r, i) => (
                   <button
                     key={r.id}
                     onClick={() => setActiveIndex(i)}
@@ -379,6 +381,14 @@ export function RegionalDiscovery({ soundEnabled, onPlayTone }: RegionalDiscover
               </button>
             </div>
           </div>
+        </div>
+
+        <div className="mt-14 border-t border-[var(--border-subtle)] pt-10">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div><p className="text-[11px] font-semibold uppercase tracking-[.3em] text-[var(--accent-primary)]">{t('global.eyebrow')}</p><h3 className="mt-3 font-devanagari text-2xl sm:text-3xl">{t('global.title')}</h3></div>
+            <p className="max-w-xl text-sm leading-6 text-[var(--text-secondary)]">{t('global.body')}</p>
+          </div>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">{globalDiscoveryRegions.map((item) => <article key={item.id} className="flex items-center gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] p-4"><img src={item.image} alt="" loading="lazy" className="h-20 w-24 rounded-xl object-cover" /><div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-[var(--accent-primary)]">{t('global.upcoming')}</p><h4 className="mt-1 font-semibold">{item.name}</h4><p className="mt-1 line-clamp-2 text-xs leading-5 text-[var(--text-secondary)]">{item.tradition} · {item.language}</p></div></article>)}</div>
         </div>
 
         {/* aria-live region for screen readers */}
