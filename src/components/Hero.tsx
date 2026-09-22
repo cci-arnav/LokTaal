@@ -5,26 +5,25 @@ import { FolkMusicPlayer } from '@/components/FolkMusicPlayer';
 import { RegionSelector } from '@/components/RegionSelector';
 import { AmbientVisuals } from '@/components/AmbientVisuals';
 import { featuredTracks } from '@/data/featuredTracks';
+import { useI18n } from '@/contexts/I18nContext';
+import { useRouter } from '@/contexts/RouterContext';
 
 const heroImage =
   'https://images.pexels.com/photos/15937060/pexels-photo-15937060.jpeg?auto=compress&cs=tinysrgb&w=1600';
-
-const trustItems = [
-  { label: 'Artist-first credits', dot: '#E9A52B' },
-  { label: 'Regional discovery', dot: '#C84E37' },
-  { label: 'Community preservation', dot: '#174B3A' },
-];
 
 const marqueeText = 'लोकधुनें • क्षेत्रीय कलाकार • भूली हुई आवाज़ें • जीवित परंपराएँ';
 
 export function Hero() {
   const prefersReduced = useReducedMotion();
+  const { t, language } = useI18n();
+  const { navigate } = useRouter();
   const [activeRegion, setActiveRegion] = useState('Rajasthan');
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const heroRef = useRef<HTMLDivElement>(null);
 
   const activeTrack =
     featuredTracks.find((t) => t.region === activeRegion) ?? featuredTracks[0];
+  const trustItems = [{ label: t('hero.credit'), dot: '#E9A52B' }, { label: t('hero.regional'), dot: '#E06543' }, { label: t('hero.preservation'), dot: '#58A783' }];
 
   // Cursor parallax for orbit (desktop only)
   useEffect(() => {
@@ -47,24 +46,24 @@ export function Hero() {
   }, [prefersReduced]);
 
   return (
-    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-indigo-midnight">
+    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-[#3d176d]">
       {/* === Background layers === */}
       <div className="absolute inset-0" aria-hidden="true">
         {/* Base gradient: indigo to maroon */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-midnight via-indigo-deep to-maroon-heritage" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_30%,rgba(147,51,234,.48),transparent_35%),linear-gradient(135deg,#301052_0%,#5B21B6_48%,#6f234d_100%)]" />
 
         {/* Folk performer image */}
         <div className="absolute inset-0">
           <img
             src={heroImage}
             alt="Rajasthani folk musicians playing traditional instruments outdoors"
-            className="h-full w-full object-cover object-center opacity-25"
+            className="h-full w-full object-cover object-center opacity-30"
           />
         </div>
 
         {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-midnight via-indigo-midnight/85 to-indigo-midnight/50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-indigo-midnight via-transparent to-indigo-midnight/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#26103f]/95 via-[#3f1769]/78 to-[#5B21B6]/28" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#25103d]/95 via-transparent to-[#341152]/65" />
 
         {/* Textile line pattern */}
         <div className="textile-pattern absolute inset-0 opacity-40" />
@@ -102,11 +101,11 @@ export function Hero() {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-saffron" />
               </span>
               <span className="font-devanagari text-xs text-ivory/90">
-                लोक से दुनिया तक
+                {t('hero.eyebrow')}
               </span>
               <span className="text-sand/40">•</span>
               <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-saffron/80">
-                A Living Folk Music Archive
+                {t('hero.archive')}
               </span>
             </motion.div>
 
@@ -119,7 +118,7 @@ export function Hero() {
                 className="block font-normal leading-[1.15] text-balance"
                 style={{ fontSize: 'clamp(2rem, 5.5vw, 3.75rem)' }}
               >
-                हर मिटती धुन को
+                {t('hero.line1')}
               </motion.span>
               <motion.span
                 initial={prefersReduced ? undefined : { opacity: 0, y: 24 }}
@@ -132,7 +131,7 @@ export function Hero() {
                   textShadow: '0 0 40px rgba(233, 165, 43, 0.25)',
                 }}
               >
-                मिले नई पहचान
+                {t('hero.line2')}
               </motion.span>
             </h1>
 
@@ -143,7 +142,7 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-3 font-sans text-sm text-sand/70 sm:text-base"
             >
-              Preserve the songs of our roots. Carry their voices to the world.
+              {t('hero.support')}
             </motion.p>
 
             {/* Supporting paragraph */}
@@ -153,8 +152,7 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="mt-5 max-w-xl font-devanagari text-sm leading-relaxed text-ivory/75 sm:text-[15px]"
             >
-              लोकताल एक जीवंत मंच है जहाँ कलाकार और समुदाय अपनी लोकधुनें साझा कर सकते हैं, उन्हें
-              सुरक्षित रख सकते हैं और दुनिया के नए श्रोताओं तक पहुँचा सकते हैं।
+              {t('hero.body')}
             </motion.p>
             <motion.p
               initial={prefersReduced ? undefined : { opacity: 0 }}
@@ -162,8 +160,7 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.6 }}
               className="mt-2 max-w-xl text-xs text-sand/50 sm:text-[13px]"
             >
-              Upload, discover and support traditional music from every country, region,
-              district and village.
+              {language === 'en' ? 'Upload, discover and support traditional music from every state, region, district and village.' : 'हर राज्य, क्षेत्र, ज़िले और गाँव की लोकधुनों को साझा करें, खोजें और समर्थन दें।'}
             </motion.p>
 
             {/* Buttons */}
@@ -176,14 +173,14 @@ export function Hero() {
               {/* Primary */}
               <button
                 type="button"
-                onClick={() => document.getElementById('archive')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' })}
+                onClick={() => document.getElementById('states')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' })}
                 className="group relative flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-saffron to-turmeric px-6 py-3.5 text-ivory shadow-xl shadow-saffron/25 transition-all duration-300 hover:shadow-saffron/40 hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-[0.97] sm:px-7"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <Play className="h-4 w-4 fill-current" />
                 <span className="flex flex-col items-start leading-none">
                   <span className="font-devanagari text-base font-medium text-indigo-midnight">
-                    लोक संगीत खोजें
+                    {t('hero.explore')}
                   </span>
                   <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-indigo-midnight/60">
                     Explore Folk Music
@@ -201,13 +198,13 @@ export function Hero() {
               {/* Secondary */}
               <button
                 type="button"
-                onClick={() => document.getElementById('preserve')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' })}
+                onClick={() => navigate('/login?redirect=/upload')}
                 className="group flex items-center justify-center gap-2.5 rounded-full border border-saffron/30 bg-indigo-midnight/30 px-6 py-3.5 text-ivory backdrop-blur-sm transition-all duration-300 hover:border-saffron/50 hover:bg-indigo-midnight/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-[0.97] sm:px-7"
               >
                 <Upload className="h-4 w-4 text-saffron" />
                 <span className="flex flex-col items-start leading-none">
                   <span className="font-devanagari text-base font-medium">
-                    अपनी धुन अपलोड करें
+                    {t('hero.upload')}
                   </span>
                   <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-sand/50">
                     Upload a Folk Song

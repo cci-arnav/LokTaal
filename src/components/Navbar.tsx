@@ -1,230 +1,101 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Search, Menu, X, Upload, Globe } from 'lucide-react';
-
-const navLinks = [
-  { label: 'Discover', href: '#discover' },
-  { label: 'Regions', href: '#regions' },
-  { label: 'Artists', href: '#artists' },
-  { label: 'Our Mission', href: '#mission' },
-];
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { Globe2, Menu, Search, Upload, X } from 'lucide-react';
+import logo from '@/assets/branding/loktaal-logo.png';
+import { useI18n } from '@/contexts/I18nContext';
+import { AppLink, useRouter } from '@/contexts/RouterContext';
+import { buildSearchIndex, filterSearch } from '@/lib/search';
+import { indiaRegions } from '@/data/indiaStates';
+import { demoTunes } from '@/data/demoTunes';
 
 export function Navbar() {
-  const prefersReduced = useReducedMotion();
+  const reduced = useReducedMotion();
+  const { t, language, toggleLanguage } = useI18n();
+  const { path, navigate } = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [language, setLanguage] = useState<'हिंदी / EN' | 'EN / हिंदी'>('हिंदी / EN');
-  const goToUpload = () => { setMobileOpen(false); document.getElementById('preserve')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' }); };
+  const [query, setQuery] = useState('');
+  const [activeResult, setActiveResult] = useState(0);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const index = useMemo(() => buildSearchIndex(indiaRegions, demoTunes), []);
+  const results = useMemo(() => filterSearch(index, query), [index, query]);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const links = [
+    { label: t('nav.home'), href: '/', route: true },
+    { label: t('nav.explore'), href: '/#discover', section: 'discover' },
+    { label: t('nav.states'), href: '/#states', section: 'states' },
+    { label: t('nav.traditions'), href: '/#journey', section: 'journey' },
+    { label: t('nav.about'), href: '/#mission', section: 'mission' },
+  ];
+  const isCurrentLink = (link: (typeof links)[number]) =>
+    (link.route && path === '/') || (link.section === 'states' && path.startsWith('/states/'));
 
-  // Prevent body scroll when mobile menu is open
+  useEffect(() => { const onScroll = () => setScrolled(window.scrollY > 20); onScroll(); window.addEventListener('scroll', onScroll, { passive: true }); return () => window.removeEventListener('scroll', onScroll); }, []);
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { setMobileOpen(false); setSearchOpen(false); } };
+    document.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); };
   }, [mobileOpen]);
+  useEffect(() => {
+    const outside = (event: PointerEvent) => { if (!searchRef.current?.contains(event.target as Node)) setSearchOpen(false); };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, []);
+  useEffect(() => { setMobileOpen(false); setSearchOpen(false); }, [path]);
 
-  return (
-    <>
-      <motion.header
-        initial={prefersReduced ? undefined : { y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="fixed inset-x-0 top-0 z-50"
-      >
-        <nav
-          aria-label="Main navigation"
-          style={scrolled ? { backgroundColor: 'color-mix(in srgb, var(--page-bg) 90%, transparent)' } : undefined}
-          className={`transition-all duration-500 ${
-            scrolled
-              ? 'border-b border-[var(--border-subtle)] backdrop-blur-xl'
-              : 'border-b border-transparent bg-transparent'
-          }`}
-        >
-          <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3.5 sm:px-6 lg:px-10">
-            {/* Logo */}
-            <a
-              href="#"
-              aria-label="LokTaal home"
-              className="group flex flex-col leading-none text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded-sm"
-            >
-              <span className="font-devanagari text-2xl font-normal transition-colors group-hover:text-[var(--accent-primary)] sm:text-[26px]">
-                लोकताल
-              </span>
-              <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.35em] text-[var(--text-secondary)]">
-                LokTaal
-              </span>
-            </a>
+  const goSection = (event: React.MouseEvent<HTMLAnchorElement>, section?: string) => {
+    if (!section) return;
+    event.preventDefault();
+    if (path !== '/') navigate(`/#${section}`);
+    window.requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }));
+    setMobileOpen(false);
+  };
+  const chooseResult = (href: string) => { setSearchOpen(false); setQuery(''); navigate(href); };
+  const searchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowDown') { event.preventDefault(); setActiveResult((value) => Math.min(results.length - 1, value + 1)); }
+    if (event.key === 'ArrowUp') { event.preventDefault(); setActiveResult((value) => Math.max(0, value - 1)); }
+    if (event.key === 'Enter' && results[activeResult]) { event.preventDefault(); chooseResult(results[activeResult].href); }
+    if (event.key === 'Escape') setSearchOpen(false);
+  };
 
-            {/* Desktop nav links */}
-            <ul className="hidden items-center gap-8 lg:flex">
-              {navLinks.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="group relative py-2 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded-sm"
-                  >
-                    {link.label}
-                    {/* Rhythm-line hover indicator */}
-                    <span className="absolute -bottom-0.5 left-0 h-0.5 w-0 overflow-hidden rounded-full bg-[var(--accent-primary)] transition-all duration-300 group-hover:w-full group-focus-visible:w-full">
-                      <span className="block h-full w-3 rounded-full bg-terracotta" />
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            {/* Right actions */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Search */}
-              <button
-                type="button"
-                aria-label="Search folk music"
-                aria-pressed={searchOpen}
-                onClick={() => setSearchOpen((value) => !value)}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-[var(--text-secondary)] transition-colors hover:bg-[var(--border-subtle)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
-              >
-                <Search className="h-[18px] w-[18px]" />
-              </button>
-
-              {/* Language selector */}
-              <button
-                type="button"
-                aria-label="Switch language"
-                onClick={() => setLanguage((value) => value === 'हिंदी / EN' ? 'EN / हिंदी' : 'हिंदी / EN')}
-                className="hidden items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] sm:flex"
-              >
-                <Globe className="h-3.5 w-3.5" />
-                {language}
-              </button>
-
-              {/* Upload CTA */}
-              <button
-                type="button"
-                onClick={goToUpload}
-                className="group hidden items-center gap-2 rounded-full bg-gradient-to-r from-terracotta to-saffron px-4 py-2.5 text-sm font-semibold text-indigo-midnight shadow-lg shadow-saffron/20 transition-all duration-300 hover:shadow-saffron/40 hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-95 sm:flex"
-              >
-                <Upload className="h-4 w-4" />
-                Upload Folk Music
-                <motion.span
-                  className="inline-block"
-                  animate={prefersReduced ? undefined : { x: [0, 3, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                >
-                  →
-                </motion.span>
-              </button>
-
-              {/* Mobile upload icon */}
-              <button
-                type="button"
-                aria-label="Upload folk music"
-                onClick={goToUpload}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-terracotta to-saffron text-indigo-midnight shadow-lg shadow-saffron/20 transition-all hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron sm:hidden"
-              >
-                <Upload className="h-[18px] w-[18px]" />
-              </button>
-
-              {/* Hamburger */}
-              <button
-                type="button"
-                aria-label="Open menu"
-                aria-expanded={mobileOpen}
-                aria-controls="mobile-menu"
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-sand/80 transition-colors hover:bg-sand/10 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron lg:hidden"
-              >
-                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button>
+  return <motion.header initial={reduced ? undefined : { y: -70, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="fixed inset-x-0 top-0 z-50">
+    <nav aria-label="Main navigation" style={scrolled || path !== '/' ? { backgroundColor: 'color-mix(in srgb, var(--page-bg) 93%, transparent)' } : undefined} className={`border-b transition duration-300 ${scrolled || path !== '/' ? 'border-[var(--border-subtle)] shadow-lg backdrop-blur-xl' : 'border-transparent'}`}>
+      <div className="relative mx-auto flex h-[74px] max-w-[1600px] items-center gap-4 px-3 sm:px-6 lg:px-8">
+        <AppLink to="/" aria-label="Loktaal home" className="flex shrink-0 rounded-lg bg-[#100b1d]/80 px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"><img src={logo} alt="Loktaal" className="h-auto w-[100px] object-contain sm:w-[124px]" /></AppLink>
+        <ul className="hidden flex-1 items-center justify-center gap-4 xl:flex">{links.map((link) => <li key={link.href}><AppLink to={link.href} onClick={(event) => goSection(event, link.section)} aria-current={isCurrentLink(link) ? 'page' : undefined} className="rounded-md px-2 py-3 text-sm font-semibold text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] aria-[current=page]:text-[var(--accent-primary)]">{link.label}</AppLink></li>)}</ul>
+        <div className="ml-auto flex items-center gap-2">
+          <div ref={searchRef} className="relative hidden md:block">
+            <div className={`flex h-11 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface)] transition-all ${searchOpen ? 'w-[min(360px,32vw)] px-3' : 'w-11 justify-center'}`}>
+              <button type="button" aria-label={t('search.label')} aria-expanded={searchOpen} onClick={() => setSearchOpen((value) => !value)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"><Search className="h-4 w-4" /></button>
+              {searchOpen && <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); setActiveResult(0); }} onKeyDown={searchKeyDown} placeholder={t('search.placeholder')} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--text-secondary)]" />}
             </div>
+            <SearchResults open={searchOpen} query={query} results={results} active={activeResult} onChoose={chooseResult} />
           </div>
-        </nav>
-      </motion.header>
+          <button type="button" onClick={toggleLanguage} aria-label="Switch language" className="hidden h-11 items-center gap-1 rounded-full border border-[var(--border-subtle)] px-3 text-sm font-semibold sm:flex"><Globe2 className="h-4 w-4" />{language === 'en' ? 'हिंदी' : 'EN'}</button>
+          <button type="button" onClick={() => navigate('/login?redirect=/upload')} className="hidden min-h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[#E06543] to-[#F0B23D] px-4 text-sm font-bold text-[#21112a] shadow-lg sm:flex"><Upload className="h-4 w-4" />{t('nav.upload')}</button>
+          <button type="button" onClick={() => setMobileOpen((value) => !value)} aria-expanded={mobileOpen} aria-controls="mobile-navigation" aria-label={mobileOpen ? 'Close menu' : 'Open menu'} className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] xl:hidden">{mobileOpen ? <X /> : <Menu />}</button>
+        </div>
+      </div>
+    </nav>
+    <AnimatePresence>{mobileOpen && <motion.div id="mobile-navigation" initial={reduced ? false : { opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={reduced ? undefined : { opacity: 0, y: -12 }} className="fixed inset-x-0 bottom-0 top-[74px] overflow-y-auto bg-[#17122B]/98 p-5 text-[#FFF7E8] backdrop-blur-xl xl:hidden">
+      <div className="mx-auto max-w-xl">
+        <MobileSearch query={query} setQuery={setQuery} results={results} onChoose={chooseResult} placeholder={t('search.placeholder')} noResults={t('search.none')} />
+        <ul className="mt-6">{links.map((link) => <li key={link.href}><AppLink to={link.href} onClick={(event) => goSection(event, link.section)} aria-current={isCurrentLink(link) ? 'page' : undefined} className="flex min-h-14 items-center justify-between border-b border-white/10 text-lg font-semibold aria-[current=page]:text-[#F0B23D]">{link.label}<span className="text-[#F0B23D]">→</span></AppLink></li>)}</ul>
+        <button type="button" onClick={() => navigate('/login?redirect=/upload')} className="mt-7 flex min-h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#E06543] to-[#F0B23D] font-bold text-[#21112a]"><Upload className="h-5 w-5" />{t('nav.upload')}</button>
+        <button type="button" onClick={toggleLanguage} className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/20"><Globe2 className="h-4 w-4" />{language === 'en' ? 'हिंदी' : 'EN'}</button>
+      </div>
+    </motion.div>}</AnimatePresence>
+  </motion.header>;
+}
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            id="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 lg:hidden"
-          >
-            {/* Backdrop */}
-            <div
-              className="absolute inset-0 bg-indigo-midnight/95 backdrop-blur-xl"
-              onClick={() => setMobileOpen(false)}
-            />
+function SearchResults({ open, query, results, active, onChoose }: { open: boolean; query: string; results: ReturnType<typeof filterSearch>; active: number; onChoose: (href: string) => void }) {
+  const { t } = useI18n();
+  if (!open || !query.trim()) return null;
+  return <div role="listbox" aria-label={t('search.results')} className="absolute right-0 top-14 max-h-[60vh] w-[min(420px,calc(100vw-2rem))] overflow-y-auto rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] p-2 text-[var(--text-primary)] shadow-2xl">{results.length ? results.map((result, index) => <button type="button" role="option" aria-selected={active === index} key={result.id} onClick={() => onChoose(result.href)} className={`block w-full rounded-xl px-3 py-3 text-left ${active === index ? 'bg-[var(--border-subtle)]' : 'hover:bg-[var(--border-subtle)]'}`}><span className="block text-[10px] font-bold uppercase tracking-wider text-[var(--accent-primary)]">{result.group}</span><span className="block font-semibold">{result.title}</span><span className="block text-xs text-[var(--text-secondary)]">{result.subtitle}</span></button>) : <p className="px-3 py-6 text-center text-sm text-[var(--text-secondary)]">{t('search.none')}</p>}</div>;
+}
 
-            {/* Panel */}
-            <motion.div
-              initial={prefersReduced ? undefined : { y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={prefersReduced ? undefined : { y: -20, opacity: 0 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-              className="relative flex h-full flex-col px-6 pt-24 pb-8"
-            >
-              <ul className="flex flex-col gap-1">
-                {navLinks.map((link, i) => (
-                  <motion.li
-                    key={link.label}
-                    initial={prefersReduced ? undefined : { x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 + i * 0.08, duration: 0.4 }}
-                  >
-                    <a
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center justify-between border-b border-sand/10 py-4 text-xl font-medium text-ivory transition-colors hover:text-saffron focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron rounded-sm"
-                    >
-                      <span className="font-devanagari text-2xl">{link.label}</span>
-                      <span className="text-saffron">→</span>
-                    </a>
-                  </motion.li>
-                ))}
-              </ul>
-
-              <motion.div
-                initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-                className="mt-auto space-y-3"
-              >
-                <button
-                  type="button"
-                  onClick={goToUpload}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-terracotta to-saffron px-6 py-3.5 text-base font-semibold text-indigo-midnight shadow-lg shadow-saffron/20"
-                >
-                  <Upload className="h-5 w-5" />
-                  Upload Folk Music
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLanguage((value) => value === 'हिंदी / EN' ? 'EN / हिंदी' : 'हिंदी / EN')}
-                  className="flex w-full items-center justify-center gap-2 rounded-full border border-sand/20 px-6 py-3.5 text-base font-medium text-sand/80"
-                >
-                  <Globe className="h-4 w-4" />
-                  {language}
-                </button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
+function MobileSearch({ query, setQuery, results, onChoose, placeholder, noResults }: { query: string; setQuery: (value: string) => void; results: ReturnType<typeof filterSearch>; onChoose: (href: string) => void; placeholder: string; noResults: string }) {
+  return <div><label className="flex min-h-12 items-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-4"><Search className="h-4 w-4" /><span className="sr-only">{placeholder}</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={placeholder} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-white/50" /></label>{query.trim() && <div className="mt-2 rounded-2xl border border-white/10 bg-white/5 p-2">{results.length ? results.slice(0, 6).map((result) => <button key={result.id} onClick={() => onChoose(result.href)} className="block min-h-12 w-full rounded-xl px-3 text-left hover:bg-white/10"><span className="block font-semibold">{result.title}</span><span className="block text-xs text-white/60">{result.subtitle}</span></button>) : <p className="p-4 text-center text-sm text-white/60">{noResults}</p>}</div>}</div>;
 }
