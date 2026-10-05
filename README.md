@@ -2,6 +2,8 @@
 
 LokTaal is a bilingual React archive for discovering, contributing, reviewing, and publishing permission-aware Indian folk recordings. Supabase provides authentication, PostgreSQL data, Row Level Security (RLS), RPC status transitions, and private audio/cover storage.
 
+The Android APK distributed from the homepage is stored at `public/downloads/loktaal-android.apk`, which builds to the stable `/downloads/loktaal-android.apk` download URL.
+
 ## Local setup
 
 Requirements: Node.js 22 or newer, npm, and a Supabase project created specifically for LokTaal.
