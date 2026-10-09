@@ -46,11 +46,11 @@ export function Hero() {
   }, [prefersReduced]);
 
   return (
-    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-[#FF7A18]">
+    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-[#FF7A00]">
       {/* === Background layers === */}
       <div className="absolute inset-0" aria-hidden="true">
-        {/* Base gradient: vibrant orange/pink to purple */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_18%,rgba(255,240,126,.46),transparent_32%),radial-gradient(circle_at_82%_34%,rgba(255,95,109,.58),transparent_38%),linear-gradient(135deg,#FF7A18_0%,#FF4DB8_48%,#6D28D9_100%)]" />
+        {/* Base gradient: bright warm sunset tones without purple */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_18%,rgba(255,244,160,.5),transparent_30%),radial-gradient(circle_at_82%_34%,rgba(255,120,76,.54),transparent_38%),linear-gradient(135deg,#FF7A00_0%,#FF5F3D_42%,#FF3B30_100%)]" />
 
         {/* Folk performer image */}
         <div className="absolute inset-0">
