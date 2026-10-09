@@ -21,13 +21,13 @@
 }
 
 [data-theme='desert-folk'] {
-  --page-bg: #e9d1a5;
-  --surface: #f5e6c8;
-  --surface-raised: #fdf0d6;
-  --text-primary: #351b20;
-  --text-secondary: #765a4c;
-  --accent-primary: #a9342b;
-  --accent-secondary: #d88924;
+  --page-bg: #e9e2d7;
+  --surface: #f5f1e9;
+  --surface-raised: #fbf8f1;
+  --text-primary: #35251c;
+  --text-secondary: #57463c;
+  --accent-primary: #a94432;
+  --accent-secondary: #875735;
   --border-subtle: rgba(53, 27, 32, 0.12);
   --rhythm-line: #a9342b;
   --glow-color: rgba(169, 52, 43, 0.2);
@@ -85,7 +85,7 @@
   --surface: #f8edd7;
   --surface-raised: #fff7e8;
   --text-primary: #2c2021;
-  --text-secondary: #6d5b50;
+  --text-secondary: #57463c;
   --accent-primary: #9e302d;
   --accent-secondary: #1d5947;
   --border-subtle: rgba(44, 32, 33, 0.14);

@@ -23,7 +23,7 @@ export function Hero() {
 
   const activeTrack =
     featuredTracks.find((t) => t.region === activeRegion) ?? featuredTracks[0];
-  const trustItems = [{ label: t('hero.credit'), dot: '#E9A52B' }, { label: t('hero.regional'), dot: '#E06543' }, { label: t('hero.preservation'), dot: '#58A783' }];
+  const trustItems = [{ label: t('hero.credit'), dot: '#A94432' }, { label: t('hero.regional'), dot: '#C87535' }, { label: t('hero.preservation'), dot: '#56816A' }];
 
   // Cursor parallax for orbit (desktop only)
   useEffect(() => {
@@ -46,34 +46,35 @@ export function Hero() {
   }, [prefersReduced]);
 
   return (
-    <section id="discover" data-theme="midnight-raga" className="relative min-h-[100svh] w-full overflow-x-clip bg-[#FF7A00]">
+    <section id="discover" data-theme="desert-folk" className="relative min-h-[100svh] w-full overflow-x-clip bg-[#E9E2D7] text-[#35251C]">
       {/* === Background layers === */}
       <div className="absolute inset-0" aria-hidden="true">
-        {/* Base gradient: bright warm sunset tones without purple */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_18%,rgba(255,244,160,.5),transparent_30%),radial-gradient(circle_at_82%_34%,rgba(255,120,76,.54),transparent_38%),linear-gradient(135deg,#FF7A00_0%,#FF5F3D_42%,#FF3B30_100%)]" />
+        {/* A quiet, low-saturation parchment base keeps the hero easy on the eyes. */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(250,247,240,.45),transparent_42%),linear-gradient(125deg,#E9E2D7_0%,#EAE5D9_58%,#E4DDD0_100%)]" />
 
         {/* Folk performer image */}
         <div className="absolute inset-0">
           <img
             src={heroImage}
             alt="Rajasthani folk musicians playing traditional instruments outdoors"
-            className="h-full w-full object-cover object-center opacity-[0.38]"
+            className="h-full w-full object-cover object-center opacity-[0.76]"
           />
         </div>
 
-        {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(35,12,62,.94)_0%,rgba(76,29,149,.66)_48%,rgba(147,51,234,.16)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(44,16,79,.82)_0%,transparent_48%,rgba(109,40,217,.24)_100%)]" />
+        {/* Calm reading space on the left; the original musician photo remains clear on the right. */}
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(233,226,215,.86)_0%,rgba(233,226,215,.76)_34%,rgba(233,226,215,.48)_58%,rgba(233,226,215,.12)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(233,226,215,.48)_0%,rgba(233,226,215,.12)_24%,transparent_44%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(228,221,208,.22)_0%,transparent_38%)]" />
 
         {/* Textile line pattern */}
-        <div className="textile-pattern absolute inset-0 opacity-40" />
+        <div className="textile-pattern absolute inset-0 opacity-[0.07]" />
 
         {/* Grain texture */}
-        <div className="grain-overlay absolute inset-0 opacity-[0.07] mix-blend-overlay" />
+        <div className="grain-overlay absolute inset-0 opacity-[0.035] mix-blend-overlay" />
 
         {/* Soft sound rings from player area */}
         <div className="absolute right-[8%] top-1/2 hidden -translate-y-1/2 lg:block">
-          <div className="h-[600px] w-[600px] rounded-full border border-saffron/5" />
+          <div className="h-[600px] w-[600px] rounded-full border border-[#A94432]/10" />
         </div>
       </div>
 
@@ -90,27 +91,27 @@ export function Hero() {
               initial={prefersReduced ? undefined : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="inline-flex items-center gap-2.5 rounded-full border border-saffron/25 bg-indigo-midnight/40 px-3.5 py-1.5 backdrop-blur-sm"
+              className="inline-flex items-center gap-2.5 rounded-full border border-[#A94432]/20 bg-[#FFF9EC]/70 px-3.5 py-1.5 shadow-sm backdrop-blur-sm"
             >
               <span className="relative flex h-2 w-2">
                 <motion.span
-                  className="absolute inline-flex h-full w-full rounded-full bg-saffron"
+                  className="absolute inline-flex h-full w-full rounded-full bg-[#A94432]"
                   animate={prefersReduced ? undefined : { scale: [1, 1.6, 1], opacity: [0.7, 0, 0.7] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                 />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-saffron" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#A94432]" />
               </span>
-              <span className="font-devanagari text-xs text-ivory/90">
+              <span className="font-devanagari text-xs text-[#49372B]">
                 {t('hero.eyebrow')}
               </span>
-              <span className="text-sand/40">•</span>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-saffron/80">
+              <span className="text-[#8D6849]/50">•</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#A94432]/80">
                 {t('hero.archive')}
               </span>
             </motion.div>
 
             {/* Main heading */}
-            <h1 className="mt-5 font-devanagari text-ivory">
+            <h1 className="mt-5 font-devanagari text-[#35251C]">
               <motion.span
                 initial={prefersReduced ? undefined : { opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -127,8 +128,8 @@ export function Hero() {
                 className="block font-normal leading-[1.15] text-balance"
                 style={{
                   fontSize: 'clamp(2rem, 5.5vw, 3.75rem)',
-                  color: '#E9A52B',
-                  textShadow: '0 0 40px rgba(233, 165, 43, 0.25)',
+                  color: '#A94432',
+                  textShadow: '0 0 32px rgba(169, 68, 50, 0.12)',
                 }}
               >
                 {t('hero.line2')}
@@ -140,7 +141,7 @@ export function Hero() {
               initial={prefersReduced ? undefined : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-3 font-sans text-sm text-sand/70 sm:text-base"
+              className="mt-3 font-sans text-sm text-[#49372B] sm:text-base"
             >
               {t('hero.support')}
             </motion.p>
@@ -150,7 +151,7 @@ export function Hero() {
               initial={prefersReduced ? undefined : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-5 max-w-xl font-devanagari text-sm leading-relaxed text-ivory/75 sm:text-[15px]"
+              className="mt-5 max-w-xl font-devanagari text-sm leading-relaxed text-[#49372B] sm:text-[15px]"
             >
               {t('hero.body')}
             </motion.p>
@@ -158,7 +159,7 @@ export function Hero() {
               initial={prefersReduced ? undefined : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="mt-2 max-w-xl text-xs text-sand/50 sm:text-[13px]"
+              className="mt-2 max-w-xl text-xs text-[#49372B]/90 sm:text-[13px]"
             >
               {language === 'en' ? 'Upload, discover and support traditional music from every state, region, district and village.' : 'हर राज्य, क्षेत्र, ज़िले और गाँव की लोकधुनों को साझा करें, खोजें और समर्थन दें।'}
             </motion.p>
@@ -174,15 +175,15 @@ export function Hero() {
               <button
                 type="button"
                 onClick={() => document.getElementById('states')?.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth' })}
-                className="group relative flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-saffron to-turmeric px-6 py-3.5 text-ivory shadow-xl shadow-saffron/25 transition-all duration-300 hover:shadow-saffron/40 hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-[0.97] sm:px-7"
+                className="group relative flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-[#A94432] px-6 py-3.5 text-[#FFF8EA] shadow-xl shadow-[#713326]/20 transition-all duration-300 hover:bg-[#8F382B] hover:brightness-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A94432] focus-visible:ring-offset-2 focus-visible:ring-offset-[#E9E2D7] active:scale-[0.97] sm:px-7"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <Play className="h-4 w-4 fill-current" />
                 <span className="flex flex-col items-start leading-none">
-                  <span className="font-devanagari text-base font-medium text-indigo-midnight">
+                  <span className="font-devanagari text-base font-medium text-[#FFF8EA]">
                     {t('hero.explore')}
                   </span>
-                  <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-indigo-midnight/60">
+                  <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-[#FFF8EA]/90">
                     Explore Folk Music
                   </span>
                 </span>
@@ -191,7 +192,7 @@ export function Hero() {
                   animate={prefersReduced ? undefined : { x: [0, 4, 0] }}
                   transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  <ArrowRight className="h-4 w-4 text-indigo-midnight" />
+                  <ArrowRight className="h-4 w-4 text-[#FFF8EA]" />
                 </motion.span>
               </button>
 
@@ -199,14 +200,14 @@ export function Hero() {
               <button
                 type="button"
                 onClick={() => navigate('/login?redirect=/upload')}
-                className="group flex items-center justify-center gap-2.5 rounded-full border border-saffron/30 bg-indigo-midnight/30 px-6 py-3.5 text-ivory backdrop-blur-sm transition-all duration-300 hover:border-saffron/50 hover:bg-indigo-midnight/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight active:scale-[0.97] sm:px-7"
+                className="group flex items-center justify-center gap-2.5 rounded-full border border-[#A94432]/30 bg-[#FFF9EC]/65 px-6 py-3.5 text-[#49372B] shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-[#A94432]/55 hover:bg-[#FFF9EC] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A94432] focus-visible:ring-offset-2 focus-visible:ring-offset-[#E9E2D7] active:scale-[0.97] sm:px-7"
               >
-                <Upload className="h-4 w-4 text-saffron" />
+                <Upload className="h-4 w-4 text-[#A94432]" />
                 <span className="flex flex-col items-start leading-none">
                   <span className="font-devanagari text-base font-medium">
                     {t('hero.upload')}
                   </span>
-                  <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-sand/50">
+                  <span className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-[#624B3A]">
                     Upload a Folk Song
                   </span>
                 </span>
@@ -226,7 +227,7 @@ export function Hero() {
                     className="h-1.5 w-1.5 rounded-full"
                     style={{ backgroundColor: item.dot }}
                   />
-                  <span className="text-[11px] font-medium text-sand/60">{item.label}</span>
+                  <span className="text-[11px] font-medium text-[#49372B]">{item.label}</span>
                 </div>
               ))}
             </motion.div>
@@ -253,36 +254,11 @@ export function Hero() {
                   <FolkMusicPlayer track={activeTrack} />
                 </div>
 
-                {/* Floating metadata cards (desktop only) */}
-                <motion.div
-                  initial={prefersReduced ? undefined : { opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 1 }}
-                  className="absolute left-0 top-5 z-0 hidden max-w-32 rounded-xl border border-saffron/20 bg-indigo-midnight/80 px-3.5 py-2.5 backdrop-blur-md 2xl:block"
-                >
-                  <p className="font-display text-sm font-semibold text-saffron">Growing archive</p>
-                  <p className="text-[10px] uppercase tracking-wider text-sand/70">
-                    Regional traditions
-                  </p>
-                  <p className="mt-0.5 text-[9px] text-sand/60">Waiting to be heard</p>
-                </motion.div>
-
-                <motion.div
-                  initial={prefersReduced ? undefined : { opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 1.15 }}
-                  className="absolute bottom-8 right-0 z-0 hidden max-w-32 rounded-xl border border-terracotta/20 bg-indigo-midnight/80 px-3.5 py-2.5 backdrop-blur-md 2xl:block"
-                >
-                  <p className="font-display text-sm font-semibold text-terracotta-soft">
-                    From this soil
-                  </p>
-                  <p className="text-[10px] text-sand/70">To listeners worldwide</p>
-                </motion.div>
               </div>
 
               {/* Region selector */}
               <div className="relative z-10 w-full max-w-sm">
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-sand/40">
+                <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#49372B]">
                   Explore by region
                 </p>
                 <div className="scrollbar-hide -mx-1 overflow-x-auto px-1 pb-1">
@@ -304,35 +280,22 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 1.3 }}
           className="mt-6 flex flex-col items-center gap-2"
         >
-          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-sand/40">
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#725B47]/65">
             Explore the living archive
           </p>
           <motion.div
-            className="h-8 w-px bg-gradient-to-b from-saffron/50 to-transparent"
+            className="h-8 w-px bg-gradient-to-b from-[#A94432]/60 to-transparent"
             animate={prefersReduced ? undefined : { scaleY: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             style={{ transformOrigin: 'top' }}
           />
-          <ChevronDown className="h-3 w-3 text-sand/30" />
+          <ChevronDown className="h-3 w-3 text-[#A94432]/45" />
         </motion.div>
-      </div>
-
-      {/* === Vertical cultural label (desktop only) === */}
-      <div
-        className="absolute left-7 top-1/2 hidden -translate-y-1/2 2xl:block"
-        aria-hidden="true"
-      >
-        <p
-          className="text-[10px] font-semibold uppercase tracking-[0.46em] text-sand/45"
-          style={{ writingMode: 'vertical-rl' }}
-        >
-          Folk • Memory • Rhythm • Identity
-        </p>
       </div>
 
       {/* === Marquee strip === */}
       <div
-        className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-sand/10 py-3"
+        className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-[#725B47]/25 py-3"
         aria-hidden="true"
       >
         <div className="flex whitespace-nowrap">
@@ -344,7 +307,7 @@ export function Hero() {
             {Array.from({ length: 6 }).map((_, i) => (
               <span
                 key={i}
-                className="font-devanagari text-sm text-sand/15"
+                className="font-devanagari text-sm text-[#49372B]/70"
                 style={{ padding: '0 2rem' }}
               >
                 {marqueeText}

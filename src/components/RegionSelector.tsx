@@ -21,12 +21,12 @@ export function RegionSelector({ activeRegion, onSelect, accent }: RegionSelecto
             type="button"
             onClick={() => onSelect(region)}
             aria-pressed={isActive}
-            className="group relative flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-midnight focus-visible:ring-saffron"
+            className="group relative flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-semibold shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#E9E2D7] focus-visible:ring-[#A94432]"
             style={{
-              borderColor: isActive ? accent : 'rgba(232, 215, 185, 0.2)',
-              backgroundColor: isActive ? `${accent}22` : 'rgba(23, 18, 43, 0.5)',
+              borderColor: isActive ? accent : 'rgba(73, 55, 43, 0.42)',
+              backgroundColor: isActive ? `${accent}28` : 'rgba(255, 253, 248, 0.94)',
               backdropFilter: 'blur(8px)',
-              color: isActive ? '#FFF8EA' : 'rgba(232, 215, 185, 0.7)',
+              color: '#35251C',
             }}
           >
             {isActive && (

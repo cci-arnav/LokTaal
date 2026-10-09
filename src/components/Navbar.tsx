@@ -6,7 +6,6 @@ import { useI18n } from '@/contexts/I18nContext';
 import { AppLink, useRouter } from '@/contexts/RouterContext';
 import { buildSearchIndex, filterSearch } from '@/lib/search';
 import { indiaRegions } from '@/data/indiaStates';
-import { demoTunes } from '@/data/demoTunes';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePublicSongs } from '@/contexts/PublicSongsContext';
 
@@ -22,7 +21,7 @@ export function Navbar() {
   const [query, setQuery] = useState('');
   const [activeResult, setActiveResult] = useState(0);
   const searchRef = useRef<HTMLDivElement>(null);
-  const index = useMemo(() => buildSearchIndex(indiaRegions, [...approvedTracks, ...demoTunes]), [approvedTracks]);
+  const index = useMemo(() => buildSearchIndex(indiaRegions, approvedTracks), [approvedTracks]);
   const results = useMemo(() => filterSearch(index, query), [index, query]);
 
   const links = [
@@ -66,23 +65,23 @@ export function Navbar() {
   const logout = async () => { await signOut(); navigate('/'); };
 
   return <motion.header initial={reduced ? undefined : { y: -70, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="fixed inset-x-0 top-0 z-50">
-    <nav aria-label="Main navigation" style={scrolled || path !== '/' ? { backgroundColor: 'color-mix(in srgb, var(--page-bg) 93%, transparent)' } : undefined} className={`border-b transition duration-300 ${scrolled || path !== '/' ? 'border-[var(--border-subtle)] shadow-lg backdrop-blur-xl' : 'border-transparent'}`}>
+    <nav aria-label="Main navigation" style={{ backgroundColor: `color-mix(in srgb, var(--page-bg) ${scrolled || path !== '/' ? '96%' : '86%'}, transparent)` }} className={`border-b backdrop-blur-xl transition duration-300 ${scrolled || path !== '/' ? 'border-[var(--border-subtle)] shadow-lg' : 'border-[var(--border-subtle)]/40 shadow-sm'}`}>
       <div className="relative mx-auto flex h-20 max-w-[1600px] items-center gap-4 px-3 sm:px-6 lg:px-8">
         <AppLink to="/" aria-label="Loktaal home" className="flex h-16 shrink-0 items-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.09] px-2 shadow-lg shadow-black/10 backdrop-blur-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"><img src={logo} alt="Loktaal" className="h-auto w-[144px] max-w-none object-contain sm:w-[158px] lg:w-[164px]" /></AppLink>
         <ul className="hidden flex-1 items-center justify-center gap-4 xl:flex">{links.map((link) => <li key={link.href}><AppLink to={link.href} onClick={(event) => goSection(event, link.section)} aria-current={isCurrentLink(link) ? 'page' : undefined} className="rounded-md px-2 py-3 text-sm font-semibold text-[var(--text-secondary)] transition hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] aria-[current=page]:text-[var(--accent-primary)]">{link.label}</AppLink></li>)}</ul>
         <div className="ml-auto flex items-center gap-2">
           <div ref={searchRef} className="relative hidden md:block">
-            <div className={`flex h-11 items-center rounded-full border border-[var(--border-subtle)] bg-[var(--surface)] transition-all ${searchOpen ? 'w-[min(360px,32vw)] px-3' : 'w-11 justify-center'}`}>
-              <button type="button" aria-label={t('search.label')} aria-expanded={searchOpen} onClick={() => setSearchOpen((value) => !value)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"><Search className="h-4 w-4" /></button>
-              {searchOpen && <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); setActiveResult(0); }} onKeyDown={searchKeyDown} placeholder={t('search.placeholder')} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--text-secondary)]" />}
+            <div className={`flex h-11 items-center rounded-full border border-[#9A7958]/40 bg-[#FFF9EC] text-[#49372B] shadow-sm transition-all duration-200 hover:border-[#A94432]/60 hover:bg-[#F7E9CE] hover:shadow-md ${searchOpen ? 'w-[min(360px,32vw)] px-1' : 'w-11 justify-center'}`}>
+              <button type="button" aria-label={t('search.label')} aria-expanded={searchOpen} onClick={() => setSearchOpen((value) => !value)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:text-[#A94432] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A94432]"><Search className="h-4 w-4" /></button>
+              {searchOpen && <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); setActiveResult(0); }} onKeyDown={searchKeyDown} placeholder={t('search.placeholder')} className="min-w-0 flex-1 bg-transparent px-2 text-sm text-[#49372B] outline-none placeholder:text-[#725B47]/75" />}
             </div>
             <SearchResults open={searchOpen} query={query} results={results} active={activeResult} onChoose={chooseResult} />
           </div>
-          <button type="button" onClick={toggleLanguage} aria-label="Switch language" className="hidden h-11 items-center gap-1 rounded-full border border-[var(--border-subtle)] px-3 text-sm font-semibold sm:flex"><Globe2 className="h-4 w-4" />{language === 'en' ? 'हिंदी' : 'EN'}</button>
+          <button type="button" onClick={toggleLanguage} aria-label="Switch language" className="hidden h-11 items-center gap-1 rounded-full border border-[#9A7958]/40 bg-[#FFF9EC] px-3 text-sm font-semibold text-[#49372B] shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[#A94432]/60 hover:bg-[#F7E9CE] hover:text-[#A94432] hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A94432] sm:flex"><Globe2 className="h-4 w-4" />{language === 'en' ? 'हिंदी' : 'EN'}</button>
           {isAuthenticated && <button type="button" onClick={() => navigate('/my-submissions')} aria-label="My submissions" className="hidden h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] lg:flex"><UserRound className="h-4 w-4" /></button>}
           {isAdmin && <button type="button" onClick={() => navigate('/admin/submissions')} aria-label="Moderate submissions" className="hidden h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] lg:flex"><ShieldCheck className="h-4 w-4" /></button>}
           {isAuthenticated && <button type="button" onClick={() => void logout()} aria-label="Log out" className="hidden h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] lg:flex"><LogOut className="h-4 w-4" /></button>}
-          <button type="button" onClick={() => navigate(isAuthenticated ? '/upload' : '/login?redirect=/upload')} className="hidden min-h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[#E06543] to-[#F0B23D] px-4 text-sm font-bold text-[#21112a] shadow-lg sm:flex"><Upload className="h-4 w-4" />{t('nav.upload')}</button>
+          <button type="button" onClick={() => navigate(isAuthenticated ? '/upload' : '/login?redirect=/upload')} className="hidden min-h-11 items-center gap-2 rounded-full bg-[#A94432] px-4 text-sm font-bold text-[#FFF8EA] shadow-md shadow-[#713326]/20 transition hover:-translate-y-0.5 hover:bg-[#8F382B] hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A94432] sm:flex"><Upload className="h-4 w-4" />{t('nav.upload')}</button>
           <button type="button" onClick={() => setMobileOpen((value) => !value)} aria-expanded={mobileOpen} aria-controls="mobile-navigation" aria-label={mobileOpen ? 'Close menu' : 'Open menu'} className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] xl:hidden">{mobileOpen ? <X /> : <Menu />}</button>
         </div>
       </div>

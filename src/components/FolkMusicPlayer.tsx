@@ -47,7 +47,7 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
       initial={prefersReduced ? undefined : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="relative w-full max-w-sm rounded-2xl border border-sand/15 bg-indigo-midnight/70 p-5 shadow-2xl backdrop-blur-xl"
+      className="relative w-full max-w-sm rounded-2xl border border-[#F5E6C8]/15 bg-[#49372B]/90 p-5 text-[#FFF8EA] shadow-2xl backdrop-blur-xl"
       style={{
         boxShadow: `0 20px 60px -20px ${accent}33, 0 8px 32px -8px rgba(0,0,0,0.5)`,
       }}
@@ -90,7 +90,7 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
             type="button"
             onClick={selectTrack}
             aria-label={isPlaying ? 'Pause track' : 'Play track'}
-            className="absolute inset-0 flex items-center justify-center rounded-full bg-indigo-midnight/40 transition-colors hover:bg-indigo-midnight/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
+            className="absolute inset-0 flex items-center justify-center rounded-full bg-[#49372B]/40 transition-colors hover:bg-[#49372B]/65 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
           >
             {isPlaying ? (
               <Pause className="h-6 w-6 text-ivory" fill="currentColor" />
@@ -205,7 +205,7 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
             type="button"
             onClick={() => { setMuted(!muted); setVolume(muted ? 0.8 : 0); }}
             aria-label={muted || volume === 0 ? 'Unmute' : 'Mute'}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-sand/5 text-sand/60 transition-colors hover:bg-sand/10 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-sand/70 transition-colors hover:bg-white/10 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
           >
             {muted || volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </button>
@@ -214,7 +214,7 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
             onClick={() => setSaved(!saved)}
             aria-label={saved ? 'Remove bookmark' : 'Save track'}
             aria-pressed={saved}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-sand/5 transition-colors hover:bg-sand/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 transition-colors hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
             style={{ color: saved ? accent : 'rgba(232, 215, 185, 0.6)' }}
           >
             <Bookmark className="h-4 w-4" fill={saved ? 'currentColor' : 'none'} />
@@ -223,7 +223,7 @@ export function FolkMusicPlayer({ track }: FolkMusicPlayerProps) {
             type="button"
             onClick={handleShare}
             aria-label="Share track"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-sand/5 text-sand/60 transition-colors hover:bg-sand/10 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-sand/70 transition-colors hover:bg-white/10 hover:text-ivory focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron"
           >
             <Share2 className="h-4 w-4" />
           </button>

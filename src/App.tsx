@@ -6,7 +6,6 @@ import { SoundJourney } from "@/components/sections/SoundJourney";
 import { RegionalDiscovery } from "@/components/sections/RegionalDiscovery";
 import { StateDirectory } from "@/components/sections/StateDirectory";
 import { PreservationStory } from "@/components/sections/PreservationStory";
-import { FeaturedVoices } from "@/components/sections/FeaturedVoices";
 import { ArchiveCollection } from "@/components/sections/ArchiveCollection";
 import { PreserveSongCTA } from "@/components/sections/PreserveSongCTA";
 import { WaveformDivider } from "@/components/sections/WaveformDivider";
@@ -81,7 +80,6 @@ function Homepage() {
       <StateDirectory />
       <WaveformDivider accent="#E59B32" />
       <PreservationStory />
-      <FeaturedVoices />
       <ArchiveCollection />
       <PreserveSongCTA />
       <SoundToggle enabled={soundEnabled} onToggle={toggleSound} />

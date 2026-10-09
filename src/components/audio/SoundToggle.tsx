@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Volume2, VolumeX } from 'lucide-react';
 
@@ -12,21 +13,27 @@ interface SoundToggleProps {
  */
 export function SoundToggle({ enabled, onToggle }: SoundToggleProps) {
   const prefersReduced = useReducedMotion();
+  const [highlighted, setHighlighted] = useState(false);
+  const activeHighlight = highlighted || enabled;
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
       <button
         type="button"
         onClick={onToggle}
+        onMouseEnter={() => setHighlighted(true)}
+        onMouseLeave={() => setHighlighted(false)}
+        onFocus={() => setHighlighted(true)}
+        onBlur={() => setHighlighted(false)}
         aria-label={enabled ? 'Turn sound off' : 'Turn sound on'}
         aria-pressed={enabled}
-        className="group flex items-center gap-2.5 rounded-full border px-4 py-3 shadow-lg backdrop-blur-md transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        className="group flex items-center gap-2.5 rounded-full border px-4 py-3 shadow-lg backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         style={{
-          borderColor: enabled ? 'var(--accent-primary)' : 'var(--border-subtle)',
-          backgroundColor: enabled
-            ? 'color-mix(in srgb, var(--accent-primary) 15%, var(--surface))'
+          borderColor: activeHighlight ? 'var(--accent-primary)' : 'var(--border-subtle)',
+          backgroundColor: activeHighlight
+            ? 'color-mix(in srgb, var(--accent-primary) 24%, var(--surface))'
             : 'var(--surface)',
-          color: enabled ? 'var(--accent-primary)' : 'var(--text-secondary)',
+          color: activeHighlight ? 'var(--accent-primary)' : 'var(--text-secondary)',
           // @ts-expect-error CSS custom property
           '--tw-ring-color': 'var(--accent-primary)',
           '--tw-ring-offset-color': 'var(--page-bg)',
